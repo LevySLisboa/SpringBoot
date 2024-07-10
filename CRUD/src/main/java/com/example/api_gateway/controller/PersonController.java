@@ -1,7 +1,7 @@
 package com.example.api_gateway.controller;
 
+import com.example.api_gateway.data.vo.PersonVO;
 import com.example.api_gateway.exceptions.ResourceNotFoundException;
-import com.example.api_gateway.model.Person;
 import com.example.api_gateway.services.PersonServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,23 +17,23 @@ public class PersonController{
     private PersonServices services;
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Person findById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
+    public PersonVO findById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
         return services.findById(id);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Person> findAll(){
+    public List<PersonVO> findAll(){
         return services.findAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void create(@RequestBody Person person){
-         services.create(person);
+    public PersonVO create(@RequestBody PersonVO PersonVO){
+         return services.create(PersonVO);
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Person update(@RequestBody Person person) throws ResourceNotFoundException {
-        return services.update(person);
+    public PersonVO update(@RequestBody PersonVO PersonVO) throws ResourceNotFoundException {
+        return services.update(PersonVO);
     }
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id")Long id) throws ResourceNotFoundException {

@@ -1,6 +1,8 @@
 package com.example.api_gateway.services;
 
+import com.example.api_gateway.data.vo.PersonVO;
 import com.example.api_gateway.exceptions.ResourceNotFoundException;
+import com.example.api_gateway.mapper.MyMapper;
 import com.example.api_gateway.model.Person;
 import com.example.api_gateway.repositories.PersonRepository;
 import org.slf4j.LoggerFactory;
@@ -18,22 +20,24 @@ public class PersonServices {
     @Autowired
     private PersonRepository repository;
 
-    public Person findById(Long id) throws ResourceNotFoundException {
+    public PersonVO findById(Long id) throws ResourceNotFoundException {
         logger.info("Find one people");
-        return repository.findById(id).orElseThrow(()->new ResourceNotFoundException("No records found for this ID"));
+        var entity = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("No records found for this ID"));
+        return MyMapper.parseObject(entity,PersonVO.class);
     }
 
-    public List<Person> findAll(){
-        logger.info("Find all persons");
-        return repository.findAll();
+    public List<PersonVO> findAll(){
+        logger.info("Find all people");
+        return MyMapper.parseListObjects(repository.findAll(),PersonVO.class);
     }
 
-    public Person create(Person person){
+    public PersonVO create(PersonVO person){
         logger.info("creating one person");
-        return repository.save(person);
+        var entity = MyMapper.parseObject(person, Person.class);
+        return MyMapper.parseObject(repository.save(entity),PersonVO.class);
     }
 
-    public Person update(Person person) throws ResourceNotFoundException {
+    public PersonVO update(PersonVO person) throws ResourceNotFoundException {
         logger.info("updating one person");
 
         var entity = repository.findById(person.getId())
@@ -44,7 +48,7 @@ public class PersonServices {
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        return repository.save(entity);
+        return MyMapper.parseObject(repository.save(entity),PersonVO.class);
     }
     public void delete(Long id) throws ResourceNotFoundException {
         logger.info("Deleting one person");
