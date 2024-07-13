@@ -1,6 +1,6 @@
 package com.example.api_gateway.controller;
 
-import com.example.api_gateway.data.vo.PersonVO;
+import com.example.api_gateway.data.vo.v1.PersonVO;
 import com.example.api_gateway.exceptions.ResourceNotFoundException;
 import com.example.api_gateway.services.PersonServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/api/person/v1")
 public class PersonController{
     @Autowired
     private PersonServices services;

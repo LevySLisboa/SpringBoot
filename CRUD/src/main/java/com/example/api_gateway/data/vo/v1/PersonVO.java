@@ -1,4 +1,4 @@
-package com.example.api_gateway.data.vo;
+package com.example.api_gateway.data.vo.v1;
 
 import java.io.Serializable;
 import java.util.Objects;

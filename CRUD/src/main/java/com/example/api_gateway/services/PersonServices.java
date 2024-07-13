@@ -1,6 +1,6 @@
 package com.example.api_gateway.services;
 
-import com.example.api_gateway.data.vo.PersonVO;
+import com.example.api_gateway.data.vo.v1.PersonVO;
 import com.example.api_gateway.exceptions.ResourceNotFoundException;
 import com.example.api_gateway.mapper.MyMapper;
 import com.example.api_gateway.model.Person;
