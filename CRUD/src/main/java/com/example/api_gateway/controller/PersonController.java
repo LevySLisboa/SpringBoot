@@ -1,6 +1,7 @@
 package com.example.api_gateway.controller;
 
 import com.example.api_gateway.data.vo.v1.PersonVO;
+import com.example.api_gateway.exceptions.RequiredObjectIsNullException;
 import com.example.api_gateway.exceptions.ResourceNotFoundException;
 import com.example.api_gateway.services.PersonServices;
 import com.example.api_gateway.util.MediaType;
@@ -29,14 +30,14 @@ public class PersonController {
     @PostMapping(
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.APPLICATION_YML})
-    public PersonVO create(@RequestBody PersonVO PersonVO) {
+    public PersonVO create(@RequestBody PersonVO PersonVO) throws ResourceNotFoundException, RequiredObjectIsNullException {
         return services.create(PersonVO);
     }
 
     @PutMapping(
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.APPLICATION_YML})
-    public PersonVO update(@RequestBody PersonVO PersonVO) throws ResourceNotFoundException {
+    public PersonVO update(@RequestBody PersonVO PersonVO) throws ResourceNotFoundException, RequiredObjectIsNullException {
         return services.update(PersonVO);
     }
 

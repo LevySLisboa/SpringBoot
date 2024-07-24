@@ -1,6 +1,7 @@
 package com.example.api_gateway.exceptions.handler;
 
 import com.example.api_gateway.exceptions.ExceptionResponse;
+import com.example.api_gateway.exceptions.RequiredObjectIsNullException;
 import com.example.api_gateway.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,4 +28,11 @@ public class CustomazedResponseEntityExcepctionHandler extends ResponseEntityExc
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(),ex.getMessage(),request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(RequiredObjectIsNullException.class)
+    public final ResponseEntity<ExceptionResponse> handlenBadRequestExceptions(Exception ex, WebRequest request){
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(),ex.getMessage(),request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
 }
