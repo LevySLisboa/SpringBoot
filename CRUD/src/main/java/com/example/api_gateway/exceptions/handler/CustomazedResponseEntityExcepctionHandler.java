@@ -1,6 +1,7 @@
 package com.example.api_gateway.exceptions.handler;
 
 import com.example.api_gateway.exceptions.ExceptionResponse;
+import com.example.api_gateway.exceptions.InvalidJwtAutheticationlException;
 import com.example.api_gateway.exceptions.RequiredObjectIsNullException;
 import com.example.api_gateway.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,11 @@ public class CustomazedResponseEntityExcepctionHandler extends ResponseEntityExc
     public final ResponseEntity<ExceptionResponse> handlenBadRequestExceptions(Exception ex, WebRequest request){
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(),ex.getMessage(),request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidJwtAutheticationlException.class)
+    public final ResponseEntity<ExceptionResponse> handlenInvalidJwtAutheticationlExceptionExceptions(Exception ex, WebRequest request){
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(),ex.getMessage(),request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
     }
 
 }
