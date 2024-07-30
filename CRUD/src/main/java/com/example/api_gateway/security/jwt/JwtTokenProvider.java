@@ -1,4 +1,4 @@
-package com.example.api_gateway.securityJwt;
+package com.example.api_gateway.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -27,7 +27,7 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token.secret-key:secret}")
     private String secretKey = "secret";
 
-    @Value("${security.jwt.token.expire-lenght:360000}")
+    @Value("${security.jwt.token.expire-lengh:360000}")
     private long validityInMilliseconds = 360000; // 1h
 
     @Autowired
