@@ -118,7 +118,6 @@ public class User implements UserDetails, Serializable {
     }
 
 
-
     public void setPermissions(List<Permission> permissions) {
         this.permissions = permissions;
     }

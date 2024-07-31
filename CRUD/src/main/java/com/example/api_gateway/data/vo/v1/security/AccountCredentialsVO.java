@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class AccountCredentialsVO implements Serializable {
-    private String userName,password;
+    private String userName;
+    private String password;
 
     public AccountCredentialsVO(String userName, String password) {
         this.userName = userName;
