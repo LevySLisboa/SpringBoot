@@ -29,6 +29,7 @@ public class AuthServices {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(UserServices.class);
     private Logger logger = Logger.getLogger(UserServices.class.getName());
 
+    @SuppressWarnings("rawtypes")
     public ResponseEntity singin(AccountCredentialsVO data) {
         try {
             var userName = data.getUserName();
@@ -45,6 +46,17 @@ public class AuthServices {
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid username/password supplied!");
         }
+    }
+
+    public ResponseEntity refreshToken(String userName, String refreshToken) {
+            var user = repository.findByUsername(userName);
+            var tokenResponse = new TokenVO();
+            if (user != null) {
+                tokenResponse = provider.refreshToken(refreshToken);
+            } else {
+                throw new UsernameNotFoundException(STR."Username \{userName} not found!");
+            }
+            return ResponseEntity.ok(tokenResponse);
     }
 
 

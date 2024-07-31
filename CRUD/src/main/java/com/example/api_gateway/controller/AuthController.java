@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Authentication endpoints")
 @RestController
@@ -29,6 +26,20 @@ public class AuthController {
 
         if(token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
         else return token;
+    }
+
+    @Operation(summary = "Refresh a token for authenticated user and returns a token")
+    @PutMapping(value = "/refresh/{username}")
+    public ResponseEntity refreshToken(@PathVariable(value = "username") String userName,@RequestHeader("Authorization")String refreshToken) {
+        if (checkIfParamsIsNotNull(userName, refreshToken)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
+        var token = services.refreshToken(userName,refreshToken);
+
+        if(token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
+        else return token;
+    }
+
+    private static boolean checkIfParamsIsNotNull(String userName, String refreshToken) {
+        return userName.isBlank() || userName == null || refreshToken.isBlank() || refreshToken == null;
     }
 
     private static boolean checkIfParamsIsNotNull(AccountCredentialsVO data) {
