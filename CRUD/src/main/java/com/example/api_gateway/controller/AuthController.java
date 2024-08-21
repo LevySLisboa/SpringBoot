@@ -19,8 +19,8 @@ public class AuthController {
 
     @SuppressWarnings("rawtypes")
     @Operation(summary = "Authenticates a user and returns a token")
-    @PostMapping(value = "/sigin")
-    public ResponseEntity singin(@RequestBody AccountCredentialsVO data) {
+    @PostMapping(value = "/signin")
+    public ResponseEntity signin(@RequestBody AccountCredentialsVO data) {
         if (checkIfParamsIsNotNull(data)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
         var token = services.singin(data);
 
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     private static boolean checkIfParamsIsNotNull(String userName, String refreshToken) {
-        return userName.isBlank() || userName == null || refreshToken.isBlank() || refreshToken == null;
+        return userName.isBlank() || refreshToken.isBlank();
     }
 
     private static boolean checkIfParamsIsNotNull(AccountCredentialsVO data) {
