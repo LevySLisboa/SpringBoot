@@ -55,6 +55,20 @@ public class PersonServices {
         Link link = linkTo(methodOn(PersonController.class).findAll(pageable.getPageNumber(),pageable.getPageSize(),"asc")).withSelfRel();
         return assembler.toModel(personVosPage,link);
     }
+    public PagedModel<EntityModel<PersonVO>> findPersonByName(String firstName,Pageable pageable) throws ResourceNotFoundException {
+        logger.info("Find all people");
+        var personPage = repository.findsPersonByName(firstName,pageable);
+        var personVosPage = personPage.map(p -> MyMapper.parseObject(p,PersonVO.class));
+        personVosPage.map(p-> {
+            try {
+                return p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel());
+            } catch (ResourceNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Link link = linkTo(methodOn(PersonController.class).findAll(pageable.getPageNumber(),pageable.getPageSize(),"asc")).withSelfRel();
+        return assembler.toModel(personVosPage,link);
+    }
 
     public PersonVO create(PersonVO person) throws ResourceNotFoundException, RequiredObjectIsNullException {
         if(person==null) throw new RequiredObjectIsNullException();
