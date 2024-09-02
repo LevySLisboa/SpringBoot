@@ -9,9 +9,13 @@ import com.example.api_gateway.model.Book;
 import com.example.api_gateway.repositories.BookRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -26,6 +30,9 @@ public class BookServices {
     @Autowired
     private BookRepository repository;
 
+    @Autowired
+    private PagedResourcesAssembler<BookVO> assembler;
+
     public BookVO findById(Long id) throws ResourceNotFoundException {
         logger.info("Find one Book");
         var entity = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("No records found for this ID"));
@@ -33,17 +40,19 @@ public class BookServices {
         vo.add(linkTo(methodOn(BookController.class).findById(id)).withSelfRel());
         return vo;
     }
-    public List<BookVO> findAll(){
+    public PagedModel<EntityModel<BookVO>> findAll(Pageable pageable) throws ResourceNotFoundException{
         logger.info("Find all books");
-        var books = MyMapper.parseListObjects(repository.findAll(),BookVO.class);
-        books.forEach(x-> {
+        var bookPage = repository.findAll(pageable);
+        var bookVosPage = bookPage.map(b -> MyMapper.parseObject(b,BookVO.class));
+        bookVosPage.map(b -> {
             try {
-                x.add(linkTo(methodOn(BookController.class).findById(x.getKey())).withSelfRel());
+                return b.add(linkTo(methodOn(BookController.class).findById(b.getKey())).withSelfRel());
             } catch (ResourceNotFoundException e) {
                 throw new RuntimeException(e);
             }
         });
-        return books;
+        Link link = linkTo(methodOn(BookController.class).findAll(pageable.getPageNumber(),pageable.getPageSize(),"asc")).withSelfRel();
+        return assembler.toModel(bookVosPage,link);
     }
 
     public BookVO create(BookVO book) throws RequiredObjectIsNullException, ResourceNotFoundException {
