@@ -9,8 +9,12 @@ import com.example.api_gateway.model.Person;
 import com.example.api_gateway.repositories.PersonRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.logging.Logger;
@@ -26,6 +30,9 @@ public class PersonServices {
     @Autowired
     private PersonRepository repository;
 
+    @Autowired
+    private PagedResourcesAssembler<PersonVO> assembler;
+
     public PersonVO findById(Long id) throws ResourceNotFoundException {
         logger.info("Find one people");
         var entity = repository.findById(id).orElseThrow(()->new ResourceNotFoundException("No records found for this ID"));
@@ -34,7 +41,7 @@ public class PersonServices {
         return vo;
     }
 
-    public Page<PersonVO> findAll(Pageable pageable){
+    public PagedModel<EntityModel<PersonVO>> findAll(Pageable pageable) throws ResourceNotFoundException {
         logger.info("Find all people");
         var personPage = repository.findAll(pageable);
         var personVosPage = personPage.map(p -> MyMapper.parseObject(p,PersonVO.class));
@@ -45,7 +52,8 @@ public class PersonServices {
                 throw new RuntimeException(e);
             }
         });
-        return personVosPage;
+        Link link = linkTo(methodOn(PersonController.class).findAll(pageable.getPageNumber(),pageable.getPageSize(),"asc")).withSelfRel();
+        return assembler.toModel(personVosPage,link);
     }
 
     public PersonVO create(PersonVO person) throws ResourceNotFoundException, RequiredObjectIsNullException {
