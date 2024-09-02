@@ -9,12 +9,14 @@ import com.example.api_gateway.model.Person;
 import com.example.api_gateway.repositories.PersonRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.logging.Logger;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class PersonServices {
@@ -32,17 +34,18 @@ public class PersonServices {
         return vo;
     }
 
-    public List<PersonVO> findAll(){
+    public Page<PersonVO> findAll(Pageable pageable){
         logger.info("Find all people");
-        var persons =  MyMapper.parseListObjects(repository.findAll(),PersonVO.class);
-        persons.forEach(x-> {
+        var personPage = repository.findAll(pageable);
+        var personVosPage = personPage.map(p -> MyMapper.parseObject(p,PersonVO.class));
+        personVosPage.map(p-> {
             try {
-                x.add(linkTo(methodOn(PersonController.class).findById(x.getKey())).withSelfRel());
+                return p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel());
             } catch (ResourceNotFoundException e) {
                 throw new RuntimeException(e);
             }
         });
-        return persons;
+        return personVosPage;
     }
 
     public PersonVO create(PersonVO person) throws ResourceNotFoundException, RequiredObjectIsNullException {
